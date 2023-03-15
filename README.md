@@ -8,6 +8,5 @@
 ## 変数を書き換える
 
 取得したAPIキーの値を $API_KEY に入れる
-$TEXT にチャットコメントを入力
 
 [https://nstjp.com](https://nstjp.com)
