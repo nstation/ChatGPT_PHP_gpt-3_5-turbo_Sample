@@ -38,10 +38,10 @@ function post_params($message)
 
     $curl = curl_init('https://api.openai.com/v1/chat/completions');
 
-    $header = array(
+    $header = [
         'Authorization: Bearer '.$API_KEY,
         'Content-type: application/json',
-    );
+    ];
 
     $messages[] = [
         'role'      => 'user',
