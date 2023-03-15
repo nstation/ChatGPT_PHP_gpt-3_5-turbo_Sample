@@ -1,9 +1,9 @@
 <html lang="ja">
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>ChatGPT API Chatサンプル</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT API Chatサンプル</title>
 </head>
 <body>
 
@@ -15,12 +15,11 @@
 $API_KEY = '取得したAPIキーを入力';
 
 $messages[] = [
-	'role'		=> 'system',
-	'content'	=> '日本語で回答。参考URLを表示して下さい。このタスクで最高の結果をだすために、もっと情報が必要な場合は、ドンドン質問をしてください。'
+    'role'      => 'system',
+    'content'   => '日本語で回答。参考URLを表示して下さい。このタスクで最高の結果をだすために、もっと情報が必要な場合は、ドンドン質問をしてください。'
 ];
 
 // 最初の質問
-
 $message = '人気YouTuberになるには';
 echo "<h2>$message</h2>";
 post_params($message);
@@ -31,48 +30,51 @@ echo "<h2>$message</h2>";
 post_params($message);
 
 
+// APIを叩いて返答をmessagesに追加
 function post_params($message)
 {
-	global $API_KEY;
-	global $messages;
+    global $API_KEY;
+    global $messages;
 
-	$curl = curl_init('https://api.openai.com/v1/chat/completions');
+    $curl = curl_init('https://api.openai.com/v1/chat/completions');
 
-	$header = array(
-		'Authorization: Bearer '.$API_KEY,
-		'Content-type: application/json',
-	);
+    $header = array(
+        'Authorization: Bearer '.$API_KEY,
+        'Content-type: application/json',
+    );
 
-	$messages[] = [
-		'role'		=> 'user',
-		'content'	=>	$message
-	];
-	$params =  [
-		'model'		=> 'gpt-3.5-turbo',
-		'messages'	=>	$messages
-	];
+    $messages[] = [
+        'role'      => 'user',
+        'content'   =>	$message
+    ];
 
-	$options = array(
-		CURLOPT_POST => true,
-		CURLOPT_HTTPHEADER =>$header,
-		CURLOPT_POSTFIELDS => json_encode($params,JSON_UNESCAPED_UNICODE),
-		CURLOPT_RETURNTRANSFER => true,
-	);
-	curl_setopt_array($curl, $options);
-	$response = curl_exec($curl);
+    $params =  [
+        'model'     => 'gpt-3.5-turbo',
+        'messages'  =>	$messages
+    ];
 
-	$json_array = json_decode($response, true);
+    $options = [
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER =>$header,
+        CURLOPT_POSTFIELDS => json_encode($params,JSON_UNESCAPED_UNICODE),
+        CURLOPT_RETURNTRANSFER => true,
+    ];
+    curl_setopt_array($curl, $options);
+    $response = curl_exec($curl);
 
-	$choices = $json_array['choices'];
+    $json_array = json_decode($response, true);
 
-	echo '<p>';
-	foreach($choices as $v){
-		$messages[] = $v['message'];
-		echo nl2br($v['message']['content']).'<br />';
-	}
-	echo '</p>';
+    $choices = $json_array['choices'];
 
-	return;
+    echo '<p>';
+    foreach($choices as $v){
+        // アシスタントの返答をmessagesへ追加
+        $messages[] = $v['message'];
+        echo nl2br($v['message']['content']).'<br />';
+    }
+    echo '</p>';
+
+    return;
 }
 ?>
 </body>
